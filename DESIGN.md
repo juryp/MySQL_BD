@@ -9,17 +9,16 @@ Create a database to manage personal finances, including tracking income and exp
 
 ## Scope
 
-### In-Scope:
+### Included:
 - Users
 - Accounts
 - Transaction Categories
 - Transactions
 
+### Excluded:
 
-### Out-of-Scope:
-- Detailed vehicle maintenance records
-- Real-time fuel consumption monitoring
-- Integration with external GPS and fuel sensors
+- Integration with external APIs
+- Automatic transaction classification
 
 ## Functional Requirements
 
@@ -30,42 +29,57 @@ Create a database to manage personal finances, including tracking income and exp
 - View balances and reports
 - Set and track budgets
 
-### Beyond Scope:
-- Real-time fuel consumption monitoring
-- Integration with external GPS and fuel sensors
-- Advanced analytics and forecasting
+### Users should not be able to:
+- Integrate with banking APIs
+- Automatically classify transactions
 
 ## Entities and Relationships
+### Users
 
+- Attributes:
+  - UserID: INT, Primary Key, Auto Increment
+  - FirstName: VARCHAR(255), Not Null
+  - LastName: VARCHAR(255), Not Null
+  - Email: VARCHAR(255), Unique, Not Null
+  - Password: VARCHAR(255), Not Null
+
+### Accounts
+- Attributes:
+  - AccountID: INT, Primary Key, Auto Increment
+  - UserID: INT, Foreign Key (references Users(UserID)), Not Null
+  - AccountName: VARCHAR(255), Not Null
+  - Balance: DECIMAL(10, 2), Not Null
+
+### Categories
+- Attributes:
+  - CategoryID: INT, Primary Key, Auto Increment
+  - UserID: INT, Foreign Key (references Users(UserID)), Not Null
+  - CategoryName: VARCHAR(255), Not Null
+
+### Transactions
+- Attributes:
+  - TransactionID: INT, Primary Key, Auto Increment
+  - UserID: INT, Foreign Key (references Users(UserID)), Not Null
+  - AccountID: INT, Foreign Key (references Accounts(AccountID)), Not Null
+  - CategoryID: INT, Foreign Key (references Categories(CategoryID))
+  - Amount: DECIMAL(10, 2), Not Null
+  - Date: DATE, Not Null
+  - Description: VARCHAR(255)
+
+### Relationships
+- Users - Accounts: One-to-Many (One user can have multiple accounts)
+- Users - Categories: One-to-Many (One user can create multiple categories)
+- Users - Transactions: One-to-Many (One user can have multiple transactions)
+- Accounts - Transactions: One-to-Many (One account can have multiple transactions)
+- Categories - Transactions: One-to-Many (One category can be associated with multiple transactions)
+
+### Optimizations
+- Indexes on UserID, AccountID, CategoryID for faster queries
+- Views for income and expense reports
+
+### Limitations
+- No integration with external APIs
+- Limited analytics capabilities
+
+  
 ### ER Diagram
-
-#### Entities
-
-- **Vehicles Table**: 
-  - One-to-Many with Intervals Table
-
-- **Intervals Table**: 
-  - Many-to-One with Vehicles Table
-  - One-to-Many with Locations Table (optional)
-
-- **Locations Table**: 
-  - Many-to-One with Intervals Table
-
-### Views and Optimizations
-
-#### High Fuel Consumption View
-
-```sql
-CREATE VIEW HighFuelConsumption AS
-SELECT 
-    i.interval_id, 
-    v.make, 
-    v.model, 
-    v.year, 
-    i.start_time, 
-    i.end_time, 
-    (i.start_fuel_level - i.end_fuel_level) AS fuel_consumed
-FROM Intervals i
-JOIN Vehicles v ON i.vehicle_id = v.vehicle_id
-WHERE (i.start_fuel_level - i.end_fuel_level) > 5;
-```
