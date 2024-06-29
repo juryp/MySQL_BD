@@ -1,18 +1,20 @@
-# Design Document - "Fuel Consumption and Interval Data Management Database"
+# Design Document: Personal Finance Management System
 
 By: Yurii
 
-## Scope
+
 
 ### Purpose:
-The purpose of this database is to track and manage vehicle fuel consumption based on interval data logs, including periods of parking and movement, timestamps, fuel levels, and additional metadata such as location.
+Create a database to manage personal finances, including tracking income and expenses, managing budgets, monitoring account balances, and generating financial reports.
+
+## Scope
 
 ### In-Scope:
-- Vehicle profiles
-- Interval data (parking/moving)
-- Fuel levels and timestamps
-- Location data
-- Fuel consumption reports
+- Users
+- Accounts
+- Transaction Categories
+- Transactions
+
 
 ### Out-of-Scope:
 - Detailed vehicle maintenance records
@@ -21,12 +23,12 @@ The purpose of this database is to track and manage vehicle fuel consumption bas
 
 ## Functional Requirements
 
-### User Capabilities:
-- Create and manage vehicle profiles
-- Record interval data (parking/moving)
-- Log fuel levels and timestamps
-- Track location data
-- Generate reports on fuel consumption
+### Users should be able to::
+- Register and log in
+- Manage accounts and categories
+- Manage transactions
+- View balances and reports
+- Set and track budgets
 
 ### Beyond Scope:
 - Real-time fuel consumption monitoring
