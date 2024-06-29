@@ -1,51 +1,67 @@
-## `schema.sql`
-
-```sql
--- Schema for Vehicles Table
-CREATE TABLE Vehicles (
-    vehicle_id INT PRIMARY KEY AUTO_INCREMENT,
-    make VARCHAR(50) NOT NULL,
-    model VARCHAR(50) NOT NULL,
-    year INT NOT NULL
+-- Schema for Users Table
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL
 );
 
--- Schema for Intervals Table
-CREATE TABLE Intervals (
-    interval_id INT PRIMARY KEY AUTO_INCREMENT,
-    vehicle_id INT NOT NULL,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
-    start_fuel_level FLOAT NOT NULL,
-    end_fuel_level FLOAT NOT NULL,
-    status ENUM('parking', 'moving') NOT NULL,
-    location_id INT,
-    FOREIGN KEY (vehicle_id) REFERENCES Vehicles(vehicle_id),
-    FOREIGN KEY (location_id) REFERENCES Locations(location_id)
+-- Schema for Accounts Table
+CREATE TABLE Accounts (
+    AccountID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    AccountName VARCHAR(255) NOT NULL,
+    Balance DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
--- Schema for Locations Table
-CREATE TABLE Locations (
-    location_id INT PRIMARY KEY AUTO_INCREMENT,
-    description VARCHAR(255) NOT NULL
+-- Schema for Categories Table
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    CategoryName VARCHAR(255) NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+-- Schema for Transactions Table
+CREATE TABLE Transactions (
+    TransactionID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT NOT NULL,
+    AccountID INT NOT NULL,
+    CategoryID INT,
+    Amount DECIMAL(10,2) NOT NULL,
+    Date DATE NOT NULL,
+    Description VARCHAR(255),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
 
 -- Create indexes
-CREATE INDEX idx_vehicle_make_model ON Vehicles(make, model);
-CREATE INDEX idx_interval_time ON Intervals(start_time, end_time);
-CREATE INDEX idx_location_description ON Locations(description);
+CREATE INDEX idx_user_email ON Users(Email);
+CREATE INDEX idx_account_user ON Accounts(UserID);
+CREATE INDEX idx_category_user ON Categories(UserID);
+CREATE INDEX idx_transaction_user ON Transactions(UserID);
+CREATE INDEX idx_transaction_account ON Transactions(AccountID);
+CREATE INDEX idx_transaction_category ON Transactions(CategoryID);
 
 -- Sample Data Insertion
 
--- Inserting sample data into Vehicles
-INSERT INTO Vehicles (make, model, year) VALUES ('Toyota', 'Corolla', 2019);
-INSERT INTO Vehicles (make, model, year) VALUES ('Honda', 'Civic', 2018);
+-- Inserting sample data into Users
+INSERT INTO Users (FirstName, LastName, Email, Password) VALUES ('John', 'Doe', 'john.doe@example.com', 'password123');
+INSERT INTO Users (FirstName, LastName, Email, Password) VALUES ('Jane', 'Smith', 'jane.smith@example.com', 'password123');
 
--- Inserting sample data into Locations
-INSERT INTO Locations (description) VALUES ('Downtown');
-INSERT INTO Locations (description) VALUES ('Suburb');
+-- Inserting sample data into Accounts
+INSERT INTO Accounts (UserID, AccountName, Balance) VALUES (1, 'Checking', 1000.00);
+INSERT INTO Accounts (UserID, AccountName, Balance) VALUES (2, 'Savings', 5000.00);
 
--- Inserting sample data into Intervals
-INSERT INTO Intervals (vehicle_id, start_time, end_time, start_fuel_level, end_fuel_level, status, location_id) 
-VALUES (1, '2024-06-01 08:00:00', '2024-06-01 09:00:00', 50.0, 45.0, 'moving', 1);
-INSERT INTO Intervals (vehicle_id, start_time, end_time, start_fuel_level, end_fuel_level, status, location_id) 
-VALUES (2, '2024-06-01 10:00:00', '2024-06-01 11:00:00', 60.0, 55.0, 'parking', 2);
+-- Inserting sample data into Categories
+INSERT INTO Categories (UserID, CategoryName) VALUES (1, 'Groceries');
+INSERT INTO Categories (UserID, CategoryName) VALUES (2, 'Utilities');
+
+-- Inserting sample data into Transactions
+INSERT INTO Transactions (UserID, AccountID, CategoryID, Amount, Date, Description) 
+VALUES (1, 1, 1, 100.00, '2024-06-01', 'Grocery shopping');
+INSERT INTO Transactions (UserID, AccountID, CategoryID, Amount, Date, Description) 
+VALUES (2, 2, 2, 150.00, '2024-06-01', 'Utility bill');
